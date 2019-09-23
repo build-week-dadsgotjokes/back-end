@@ -60,7 +60,7 @@ public class PublicController
                                                           .toUri();
         responseHeaders.setLocation(newRestaurantURI);
 
-        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(newuser, responseHeaders, HttpStatus.CREATED);
     }
 
     @GetMapping("favicon.ico")
