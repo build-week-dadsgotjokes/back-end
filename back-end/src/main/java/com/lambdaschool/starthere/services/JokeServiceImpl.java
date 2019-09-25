@@ -98,7 +98,7 @@ public class JokeServiceImpl implements JokeService {
             }
 
             if(!found) {
-                throw new ResourceNotFoundException(id + " You do not own this joke and you are not an admin");
+                throw new ResourceNotFoundException(id + " You do not own this joke or you are not an admin");
             }
         }
 

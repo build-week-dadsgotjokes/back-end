@@ -63,4 +63,65 @@ public class JokeController {
 
         return new ResponseEntity<>(updateJoke, HttpStatus.ACCEPTED);
     }
+
+    @PostMapping(value = "/auth/like/{jokeid}", produces = {"application/json"})
+    public ResponseEntity<?> likeJoke(Principal principal, @PathVariable long jokeid) {
+        if(principal == null || principal.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User currentUser = userService.findByName(principal.getName());
+        Joke foundJoke = jokeService.findById(jokeid);
+
+        for(User u: foundJoke.getLikedUsers()) {
+            if(u.getUserid() == currentUser.getUserid()) {
+                return new ResponseEntity<>("This user has already liked this joke! If you want to unlike use the unlike route", HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        foundJoke.getLikedUsers().add(currentUser);
+
+        jokeService.update(foundJoke, foundJoke.getId(), true);
+
+        return new ResponseEntity<>("Your user has now liked the joke", HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/auth/unlike/{jokeid}", produces = {"application/json"})
+    public ResponseEntity<?> unlikeJoke(Principal principal, @PathVariable long jokeid) {
+        if(principal == null || principal.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        User currentUser = userService.findByName(principal.getName());
+        Joke foundJoke = jokeService.findById(jokeid);
+
+        boolean found = false;
+        for(User u: foundJoke.getLikedUsers()) {
+            if(u.getUserid() == currentUser.getUserid()) {
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            return new ResponseEntity<>("This user has not yet liked this post", HttpStatus.BAD_REQUEST);
+        }
+
+        foundJoke.getLikedUsers().remove(currentUser);
+
+        jokeService.update(foundJoke, foundJoke.getId(), true);
+
+        return new ResponseEntity<>("Your user has now unliked the joke", HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "/auth/delete/{id}", produces = {"application/json"})
+    public ResponseEntity<?> deleteJoke(HttpServletRequest request,Principal principal, @PathVariable long id) {
+        if(principal == null || principal.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        jokeService.delete(id, request.isUserInRole("ADMIN"));
+
+        return new ResponseEntity<>("Joke has been deleted", HttpStatus.OK);
+    }
 }

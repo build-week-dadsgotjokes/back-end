@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service(value = "userService")
@@ -106,7 +108,7 @@ public class UserServiceImpl implements UserDetailsService, UserService
         for (Joke j : user.getJokes())
         {
             newUser.getJokes()
-                   .add(new Joke(newUser, j.getSetup(), j.getPunchline(), j.isIsprivate()));
+                   .add(new Joke(newUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getSavedUsers(), j.getLikedUsers()));
         }
 
         return userrepos.save(newUser);
@@ -145,7 +147,7 @@ public class UserServiceImpl implements UserDetailsService, UserService
                 for (Joke j : user.getJokes())
                 {
                     currentUser.getJokes()
-                            .add(new Joke(currentUser, j.getSetup(), j.getPunchline(), j.isIsprivate()));
+                            .add(new Joke(currentUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getSavedUsers(), j.getLikedUsers()));
                 }
             }
 
@@ -192,5 +194,12 @@ public class UserServiceImpl implements UserDetailsService, UserService
         {
             throw new ResourceFoundException("Role and User Combination Already Exists");
         }
+    }
+
+    public Set<Joke> returnEmptyJoke() {
+        return new HashSet<>();
+    }
+    public Set<User> returnEmptyUser() {
+        return new HashSet<>();
     }
 }

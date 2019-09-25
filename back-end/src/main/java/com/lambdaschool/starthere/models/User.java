@@ -6,8 +6,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+import java.awt.print.Book;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 // User is considered the parent entity
 
@@ -33,14 +36,32 @@ public class User extends Auditable
     private List<UserRoles> userroles = new ArrayList<>();
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("owner")
+    @JsonIgnoreProperties({"likedUsers", "savedUsers", "owner"})
     private List<Joke> jokes = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "savedJokes",
+            joinColumns = { @JoinColumn(name = "userid") },
+            inverseJoinColumns = { @JoinColumn(name = "jokeid") }
+    )
+    @JsonIgnoreProperties({ "likedUsers", "savedUsers", "owner" })
+    private List<Joke> savedJokes = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "likedJokes",
+            joinColumns = { @JoinColumn(name = "userid") },
+            inverseJoinColumns = { @JoinColumn(name = "jokeid") }
+    )
+    @JsonIgnoreProperties({ "likedUsers", "savedUsers", "owner" })
+    private List<Joke> likedJokes = new ArrayList<>();
 
     public User()
     {
     }
 
-    public User(String username, String password, List<UserRoles> userRoles)
+    public User(String username, String password, List<UserRoles> userRoles, List<Joke> savedJokes, List<Joke> likedJokes)
     {
         setUsername(username);
         setPassword(password);
@@ -49,6 +70,8 @@ public class User extends Auditable
             ur.setUser(this);
         }
         this.userroles = userRoles;
+        this.savedJokes = savedJokes;
+        this.likedJokes = likedJokes;
     }
 
     public long getUserid()
@@ -103,6 +126,22 @@ public class User extends Auditable
 
     public void setJokes(List<Joke> jokes) {
         this.jokes = jokes;
+    }
+
+    public List<Joke> getSavedJokes() {
+        return savedJokes;
+    }
+
+    public void setSavedJokes(List<Joke> savedJokes) {
+        this.savedJokes = savedJokes;
+    }
+
+    public List<Joke> getLikedJokes() {
+        return likedJokes;
+    }
+
+    public void setLikedJokes(List<Joke> likedJokes) {
+        this.likedJokes = likedJokes;
     }
 
     public List<SimpleGrantedAuthority> getAuthority()
