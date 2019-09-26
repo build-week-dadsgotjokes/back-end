@@ -25,23 +25,10 @@ public class Joke extends Auditable implements Serializable {
     @Column(columnDefinition = "boolean default false")
     private boolean isprivate;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "savedUsers",
-            joinColumns = { @JoinColumn(name = "jokeid") },
-            inverseJoinColumns = { @JoinColumn(name = "userid") }
-    )
-    @JsonIgnoreProperties("savedJokes")
-    private List<User> savedUsers = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "likedUsers",
-            joinColumns = { @JoinColumn(name = "jokeid") },
-            inverseJoinColumns = { @JoinColumn(name = "userid") }
-    )
-    @JsonIgnoreProperties("likedJokes")
-    private List<User> likedUsers = new ArrayList<>();
+    @OneToMany(mappedBy = "joke",
+            cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"user", "likedUsers", "likedJokes"})
+    private List<UserJokeLikes> likedUsers = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "userid")
@@ -50,13 +37,12 @@ public class Joke extends Auditable implements Serializable {
 
     public Joke() {}
 
-    public Joke(User owner, String setup, String punchline, boolean isprivate, List<User> savedUsers, List<User> likedUsers) {
+    public Joke(User owner, String setup, String punchline, boolean isprivate, List<UserJokeLikes> likedUsers) {
         this.owner = owner;
         this.setup = setup;
         this.punchline = punchline;
         this.isprivate = isprivate;
 
-        this.savedUsers = savedUsers;
         this.likedUsers = likedUsers;
     }
 
@@ -93,20 +79,11 @@ public class Joke extends Auditable implements Serializable {
     }
 
 
-
-    public List<User> getSavedUsers() {
-        return savedUsers;
-    }
-
-    public void setSavedUsers(List<User> savedUsers) {
-        this.savedUsers = savedUsers;
-    }
-
-    public List<User> getLikedUsers() {
+    public List<UserJokeLikes> getLikedUsers() {
         return likedUsers;
     }
 
-    public void setLikedUsers(List<User> likedUsers) {
+    public void setLikedUsers(List<UserJokeLikes> likedUsers) {
         this.likedUsers = likedUsers;
     }
 

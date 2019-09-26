@@ -3,6 +3,7 @@ package com.lambdaschool.starthere.services;
 import com.lambdaschool.starthere.exceptions.ResourceNotFoundException;
 import com.lambdaschool.starthere.models.Joke;
 import com.lambdaschool.starthere.models.User;
+import com.lambdaschool.starthere.models.UserJokeLikes;
 import com.lambdaschool.starthere.repository.JokeRepository;
 import com.lambdaschool.starthere.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,23 @@ public class JokeServiceImpl implements JokeService {
     }
 
     @Override
-    public void delete(long id, boolean isAdmin) {
+    public List<Joke> searchJokes(String setup) {
+        return jokeRepository.searchJokes(setup);
+    }
 
+    @Override
+    public List<UserJokeLikes> getLikedJokes(long user) {
+        return jokeRepository.getLikedJokes(user);
+    }
+
+    @Override
+    public void insertLikedJoke(long jokeid, long userid) {
+        jokeRepository.insertLikedJoke(jokeid, userid);
+    }
+
+    @Override
+    public void delete(long id, boolean isAdmin) {
+        jokeRepository.deleteById(id);
     }
 
     @Override

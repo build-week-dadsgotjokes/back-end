@@ -1,9 +1,6 @@
 package com.lambdaschool.starthere;
 
-import com.lambdaschool.starthere.models.Joke;
-import com.lambdaschool.starthere.models.Role;
-import com.lambdaschool.starthere.models.User;
-import com.lambdaschool.starthere.models.UserRoles;
+import com.lambdaschool.starthere.models.*;
 import com.lambdaschool.starthere.services.JokeService;
 import com.lambdaschool.starthere.services.RoleService;
 import com.lambdaschool.starthere.services.UserService;
@@ -44,31 +41,47 @@ public class SeedData implements CommandLineRunner
 
         // admin, data, user
         ArrayList<UserRoles> admins = new ArrayList<>();
+
         admins.add(new UserRoles(new User(), r1));
         admins.add(new UserRoles(new User(), r2));
         admins.add(new UserRoles(new User(), r3));
-        User u1 = new User("admin", "password", admins, returnEmptyJoke(), returnEmptyJoke());
-        Joke j2 = new Joke(u1, "joker2", "hahahaha", false, returnEmptyUser(), returnEmptyUser());
+
+
+
+        User u1 = new User("admin", "password", admins, returnEmptyJokeLikes());
+        Joke j2 = new Joke(u1, "joker2", "hahahaha", false, returnEmptyJokeLikes());
+
+
+
         u1.getJokes()
-          .add(new Joke(u1, "JokeHeadline1", "Because no molk", true, returnEmptyUser(), returnEmptyUser()));
+          .add(new Joke(u1, "JokeHeadline1", "Because no molk", true, new ArrayList<>()));
         u1.getJokes()
           .add(j2);
 
         u1 = userService.save(u1);
 
-        j2.getSavedUsers().add(u1);
+
 
         // data, user
         ArrayList<UserRoles> datas = new ArrayList<>();
+
         datas.add(new UserRoles(new User(), r3));
         datas.add(new UserRoles(new User(), r2));
-        User u2 = new User("cinnamon", "1234567", datas, returnEmptyJoke(), returnEmptyJoke());
+
+        ArrayList<UserJokeLikes> jokeLikes = new ArrayList<>();
+
+        jokeLikes.add(new UserJokeLikes(new User(), j2));
+
+        User u2 = new User("cinnamon", "1234567", datas, jokeLikes);
         u2.getJokes()
-          .add(new Joke(u2, "wow anticipation", "lmaoo", false, returnEmptyUser(), returnEmptyUser()));
+          .add(new Joke(u2, "wow anticipation", "lmaoo", false, returnEmptyJokeLikes()));
         u2.getJokes()
-          .add(new Joke(u2, "epic setup", "terrible execution", false, returnEmptyUser(), returnEmptyUser()));
+          .add(new Joke(u2, "epic setup", "terrible execution", false, returnEmptyJokeLikes()));
         u2.getJokes()
-          .add(new Joke(u2, "i like private", "why have personal jokes weirdo?", true, returnEmptyUser(), returnEmptyUser()));
+          .add(new Joke(u2, "i like private", "why have personal jokes weirdo?", true, returnEmptyJokeLikes()));
+
+
+
         userService.save(u2);
 
 
@@ -76,8 +89,8 @@ public class SeedData implements CommandLineRunner
         // user
         ArrayList<UserRoles> users = new ArrayList<>();
         users.add(new UserRoles(new User(), r2));
-        User u3 = new User("barnbarn", "ILuvM4th!", users, returnEmptyJoke(), returnEmptyJoke());
-        Joke j1 = new Joke(u3, "epicness 3.0", "killer joke", false, returnEmptyUser(), returnEmptyUser());
+        User u3 = new User("barnbarn", "ILuvM4th!", users, returnEmptyJokeLikes());
+        Joke j1 = new Joke(u3, "epicness 3.0", "killer joke", false, returnEmptyJokeLikes());
 
         u3.getJokes()
           .add(j1);
@@ -85,12 +98,12 @@ public class SeedData implements CommandLineRunner
 
         users = new ArrayList<>();
         users.add(new UserRoles(new User(), r2));
-        User u4 = new User("Bob", "password", users, returnEmptyJoke(), returnEmptyJoke());
+        User u4 = new User("Bob", "password", users, returnEmptyJokeLikes());
         userService.save(u4);
 
         users = new ArrayList<>();
         users.add(new UserRoles(new User(), r2));
-        User u5 = new User("Jane", "password", users, returnEmptyJoke(), returnEmptyJoke());
+        User u5 = new User("Jane", "password", users, returnEmptyJokeLikes());
         userService.save(u5);
 
 
@@ -103,4 +116,5 @@ public class SeedData implements CommandLineRunner
     public List<User> returnEmptyUser() {
         return new ArrayList<>();
     }
+    public List<UserJokeLikes> returnEmptyJokeLikes() { return new ArrayList<>(); }
 }

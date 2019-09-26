@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserDetailsService, UserService
         for (Joke j : user.getJokes())
         {
             newUser.getJokes()
-                   .add(new Joke(newUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getSavedUsers(), j.getLikedUsers()));
+                   .add(new Joke(newUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getLikedUsers()));
         }
 
         return userrepos.save(newUser);
@@ -147,7 +147,7 @@ public class UserServiceImpl implements UserDetailsService, UserService
                 for (Joke j : user.getJokes())
                 {
                     currentUser.getJokes()
-                            .add(new Joke(currentUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getSavedUsers(), j.getLikedUsers()));
+                            .add(new Joke(currentUser, j.getSetup(), j.getPunchline(), j.isIsprivate(), j.getLikedUsers()));
                 }
             }
 

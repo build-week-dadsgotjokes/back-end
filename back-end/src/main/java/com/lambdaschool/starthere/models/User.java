@@ -35,33 +35,20 @@ public class User extends Auditable
     @JsonIgnoreProperties("user")
     private List<UserRoles> userroles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"likedUsers", "savedUsers", "owner"})
     private List<Joke> jokes = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "savedJokes",
-            joinColumns = { @JoinColumn(name = "userid") },
-            inverseJoinColumns = { @JoinColumn(name = "jokeid") }
-    )
-    @JsonIgnoreProperties({ "likedUsers", "savedUsers", "owner" })
-    private List<Joke> savedJokes = new ArrayList<>();
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "likedJokes",
-            joinColumns = { @JoinColumn(name = "userid") },
-            inverseJoinColumns = { @JoinColumn(name = "jokeid") }
-    )
-    @JsonIgnoreProperties({ "likedUsers", "savedUsers", "owner" })
-    private List<Joke> likedJokes = new ArrayList<>();
+    @OneToMany(mappedBy = "user",
+            cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"user", "likedUsers", "likedJokes"})
+    private List<UserJokeLikes> likedJokes = new ArrayList<>();
 
     public User()
     {
     }
 
-    public User(String username, String password, List<UserRoles> userRoles, List<Joke> savedJokes, List<Joke> likedJokes)
+    public User(String username, String password, List<UserRoles> userRoles, List<UserJokeLikes> likedJokes)
     {
         setUsername(username);
         setPassword(password);
@@ -69,8 +56,11 @@ public class User extends Auditable
         {
             ur.setUser(this);
         }
+        for (UserJokeLikes ur : likedJokes)
+        {
+            ur.setUser(this);
+        }
         this.userroles = userRoles;
-        this.savedJokes = savedJokes;
         this.likedJokes = likedJokes;
     }
 
@@ -128,19 +118,11 @@ public class User extends Auditable
         this.jokes = jokes;
     }
 
-    public List<Joke> getSavedJokes() {
-        return savedJokes;
-    }
-
-    public void setSavedJokes(List<Joke> savedJokes) {
-        this.savedJokes = savedJokes;
-    }
-
-    public List<Joke> getLikedJokes() {
+    public List<UserJokeLikes> getLikedJokes() {
         return likedJokes;
     }
 
-    public void setLikedJokes(List<Joke> likedJokes) {
+    public void setLikedJokes(List<UserJokeLikes> likedJokes) {
         this.likedJokes = likedJokes;
     }
 
